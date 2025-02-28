@@ -87,5 +87,5 @@ avg_data <- subset_data %>%
     dplyr::summarise(across(4:66, mean), .groups = "drop")
 #View new dataset
 head(avg_data)
-#Write average data as csv files (not required but I wanted to)
-write_csv(avg_data, "averagemeanandstd_dataset.csv")
+#Write txt file as required to submit the assignment
+write.table(avg_data, "FinalTidyDataset.txt", sep = "\t", row.names = FALSE)
