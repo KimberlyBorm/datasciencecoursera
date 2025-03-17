@@ -1,0 +1,416 @@
+library(swirl)
+install_from_swirl("R Programming")
+swirl()
+
+------------------------
+#display info below 
+info() 
+#Press Esc Key to exit swirl and return to the R prompt (>) 
+#to exit and save your progress
+bye() 
+#skip question
+skip()
+# experiment with R on your own; swirl will ignore 
+play()
+#regain swirl attention 
+nxt()
+#main menu
+main()
+#help and more info 
+help.start() 
+
+#Clean your workspace of variabes
+lm() #list variables on workspace
+rm(list = ls()) #clear
+
+----------------------------
+#NOTE ON THE LESSON
+
+LESSSON 1 - Basic Building Blocks (1)
+
+#create and store a vector
+z <- c(1.1, 9, 3.14)
+
+#up arrow scrolls through previous code
+# tab key bring up auto-completion
+-----------------------------------
+LESSON 2 - Workspace and Files (2)
+#Mac and Linux work on Unix  - Learn more about Unix
+#List all the objects in your local workspace 
+ls()
+#List all the files in your working directory 
+list.files()
+dir()
+#examine a function with Help Page
+?function
+
+#create arcive of past directory 
+old.dir <- getwd() 
+#create a working directory
+dir.create("testdir")
+# delete directory after reseting working directory
+unlink("testdir",recursive=TRUE) 
+#create a file
+file.create() 
+#see if a file exists
+file.exists("mytest.R")
+#list file info 
+file.info("mytest.R")
+#remane file
+file.rename("mytest.R", "mytest2.R")
+#remove file
+file.remove('mytest.R')
+#copy file
+file.copy("mytest2.R", "mytest3.R")
+
+???????????????????????????
+#use file.path to construct file and directory paths that are independent of the operating system your R code is running on
+file.path("folder1", "folder2")
+#create a drectory in working directory 
+dir.create("testdir6")
+#Create a directory called "testdir2" and a subdirectory for it called "testdir3"
+dir.create(file.path("testdir2", "testdir3"), recursive = TRUE)pl
+
+#reset past saved directory
+setwd(old.dir)
+# delete directory after reseting working directory
+unlink("testdir",recursive=TRUE) 
+----------------------------------------
+  
+LESSON 3 - Sequences of Numbers (3)
+
+#create a vector of ordered numbers
+1:20
+pi:10
+seq(1, 20)
+seq(0, 10, by=0.5)
+#create. vetor of randon ordered numbers 5-10, name my_seq
+my_seq <-seq(5, 10, length=30)
+#create sequence of equal length to my_seq
+1:length(my_seq)
+seq(along.with = my_seq)
+seq_along(my_seq)
+
+#create vector with 40 zeros
+rep(0, times = 40)
+#vector to contain 10 repetitions of the vector (0, 1, 2)
+rep(c(0, 1, 2), times = 10)
+#vector to contain 10 zeros, then 10 ones, then 10 twos.
+rep(c(0, 1, 2), each = 10)
+----------------------------------------------
+  
+LESSON 4 - VECTORS (4)
+
+#atomic vector -  exactly one data type (i.e numerical)
+#list - may contain multiple data types
+
+# also have logical and character vectors
+
+#create a numeric vector(num_vect) and set results (tf) < 1
+num_vect <- c(0.5, 55, -10,  6)
+tf <- num_vect < 1
+
+#logical operators: < , > , <=, >=, == (exactly), != (inequality)
+#`|` states AT LEAST ONE of the pieces is TRUE
+#charater vectors are inclosed in double quotes ""
+#LETTERS - a predefined variable containing a character  vector of all 26 letters
+
+#join two vectors together
+paste()
+#join together the elements of the my_char character vector and separate them with single spaces
+#`collapse` argument says seperate with space
+paste(my_char, collapse = " " )
+#'concatenate' your name to the end of my_char and title it my_name
+my_name <- c(my_char, "Kimberly Bormann")
+
+#the `sep` argument joins elements with a single space
+paste("Hello", "world!", sep = " ")
+-------------------------------------------
+  
+LESSON 5 - Missing Values (5)
+#NA is no/missing value, Nan is value does not exist (i.e = 0/0)
+#a vector containing 1000 draws from a standard normal distribution
+y <- rnorm(1000)
+#a vector containing 1000 NAs
+z <- rep(NA, 1000)
+# select 100 elements at random from these 2000 values (combining y and z) 
+my_data <- sample(c(y, z), 100)
+#create logic function for NAs and count
+my_na <- is.na(my_data)
+sum(my_na)
+
+#where the NAs are located in the data
+is.na()
+#vector of length "my_data with all NAs (nat desired or useful)
+my_data == NA
+-----------------------------------------------
+  
+LESSON 6  - Subsetting Vectors (6)
+
+#index vector [ ] relates to position 
+# first 10 imputs of x
+x[1:10]
+#sebset the 3rd, 5th, and 7th elements in x
+x[c(3, 5, 7)]
+#all elements of x except the 2nd and 10th element 
+x[c(-2, -10)]
+x[-c(2, 10)]
+
+#create a vector that contains all of the non-NA values from x
+y <- x[!is.na(x)]
+#a vector of logical values, with TRUEs corresponding to values of y that are greater than zero 
+y > 0 
+#A vector of all the positive elements of y
+y[y > 0]
+
+#same results as above in one condensed line of code
+x[!is.na(x) & x >0]
+
+#create a names vector with 3 elements 
+vect <- c(foo = 11, bar = 2, norf = NA)
+#ask the names of the elements in vector vect
+names(vect)
+#create an unnameed vector and then name it
+vect2 <- c(11, 2, NA)
+names(vect2) <- c("foo", "bar", "norf")
+#subset by vector names 
+vect["bar"]
+vect[c("foo", "bar")]
+#check that two vectors are identical 
+identical(vect, vect2)
+----------------------------------------
+  
+LESSON 7 - Matrices and Data Frames (7)
+
+#give a vector dimentions to transform to a matrix
+my_vector <- 1:20
+dim(my_vector) <- c(4, 5)
+
+#check dimentions of a matrix
+dim(my_vector)
+attributes(my_vector)
+#confirm it is a matrix
+class(my_vector)
+
+#create the same matrix as above using matrix function
+matrix(1:20, 4, 5)
+
+#name the rows of the matrix(1 class) maing it a dataframe(multi-class)
+patients <- c("Bill", "Gina", "Kelly", "Sean")
+my_data <- data.frame(patients, my_matrix)
+#(Note: cbind(patients, my_matrix) will 'implicut coercion' all charaters = BAD)
+#another option that does the same thing
+rownames(my_data) <- patients
+
+#name the columns of my_data
+cnames <- c("patient", "age", "weight", "bp", "rating", "test")
+> colnames(my_data) <- cnames
+--------------------------------------
+
+LESSON 8 - LOGIC (8)
+
+== #exactly equal
+<= #less than or equal
+>= #greater than or e
+!= #not equal
+
+! #NOT operator
+!(5 == 7) #tnegates logical expression so the opposite is TRUE (yeild TRUE)
+
+& #AND operator(both statement must be true)
+TRUE & c(TRUE, FALSE, FALSE) #evalutes each element of the vector seperately
+[1] TRUE TRUE TRUE
+
+TRUE && c(TRUE, FALSE, FALSE) #only evaluates the first element of the vector
+[1] TRUE
+
+| #OR operator (one or the other must be true3)
+  
+|| # OR operator for only the first element of the vector
+
+isTRUE() #if the statement is true it yields true
+!isTRUE #if the statement is FALSE it yields true
+
+identical() #return TRUE if the two R objects passed to it as arguments are identical 
+xor("" , "") #stands for exclusive OR(if one of the statement are TRUE it yields TRUE)
+
+ints(10) #random sampling of integers from 1 to 10 without replacement
+which () #takes a logical vector as an argument and returns the indices of the vector that are TRUE
+any() #TRUE if ANY are TRUE
+all() #TRUE if ALL are TRUE
+-------------------------------------
+
+#LESSON 9 -FUNCTIONS (9)
+  
+#Step 1: write function 
+boring_function <- function(x) {
+     x
+}
+#Step 2: Save function 
+
+#you can see hte source code by typing the in function name
+boring_function
+#function to calculate mean 
+my_mean <- function(x){
+  sum(x) / length(x)
+}
+#create a default arguement for the functionnremained(%%) where an unnamed divisor yield 2
+remainder <- function(num, divisor = 2) {
+  num%%divisor
+}
+#check a function for its agruements using hte function args(). *Yes, you can pass a function through another function
+args(remainder)
+#Write a function that preforms an input function on an vector input
+evaluate <- function(func, dat){
+  func(dat)
+}
+
+#write a function that adds one to an input using an 'anonymous function"
+evaluate(function(x){x+1}, 6)
+#write a function that returns the first variable of a vector to an input using an 'anonymous function"
+evaluate(function(x){x[1]}, c(8, 4, 0))
+#write a function that returns the last variable of a vector to an input using an 'anonymous function"
+evaluate(function(x){x[length(x)]}, c(8, 4, 0))
+
+#WORKING WITH ...
+#use paste() but modify it to begin the START and end with STOP
+telegram <- function(...){
+     paste("START", ..., "STOP")
+}
+#create a MadLib using paste() and ...
+mad_libs <- function(place, adjective, noun){
+  paste("News from", place, "today where", adjective, "students took to the streets in protest of the new", noun, "being installed on campus.")
+}
+#use Mad_libs function 
+mad_libs("woods", "anrgy", "bear")
+#create a binary operator to create 'Good Job!' when "Good" %p% "job!" is typed
+"%p%" <- function(left, right){ # Remember to add arguments!
+  paste(left, right, sep = " ")
+}
+---------------------------------
+  
+#LESSON 10 - DATES AND TIMES (14)
+  
+Sys.Date() #show current date
+Sys.time() #show current time
+class() #confirm as date object
+unclass() #see object internally
+str(unclass("")) #have a more conpact view of unclass information
+"time"$"min,sec. ect." # view ONLY min or sec, or ect. 
+
+as.Date() #corerce date
+as.POSIXlt(Sys.time()) #turn time from POSIXct to POSIXlt 
+
+weekdays(d1) #show day of the week for a date or time 
+months() #shows month
+quarters() #show quarter
+
+#convert a date/time in hte wrong format to POSIXlt class
+t3 <- "October 17, 1986 08:24" 
+strptime(t3, "%B %d, %Y %H:%M")
+
+#you can complete operation on time data. Examples below
+Sys.time() > t1
+Sys.time() - t1
+#request specific units of a time difference (Example days)
+difftime(Sys.time(), t1, units = 'days')
+
+#the lubridate package by Hadley Wickham is good if you need to work with a lot of dates and times
+----------------------------------------------------------------------------
+
+LESSON 11 - lappy and sapply (10)
+
+#MORE INFO - Hadley Wickham's Journal of Statistical Software paper titled 'The Split-Apply-Combine Strategy for Data Analysis'.
+
+#dimentions of thedataset
+dim()
+#what type of data is it? It is a data set so this information isn;t helpful. 
+class()
+#we want the type of data in each column so we use lappy to the columns
+cls_list <- lapply(flags, class)
+#convert all classes to charaters 
+as.character(cls_list)
+#simplify the information from lappy with sapply
+> cls_vect <- sapply(flags, class)
+#sapply can be used with a 'anayomous funtion'
+lapply(unique_vals, function(elem) elem[2])
+
+#NOTE: When sapply can not simplify it returns hte same results as lapply
+________________________________________________________________
+
+LESSON 12 - vapply amd tapply(table+apply)
+
+#SUMMARY
+#vapply() as a safer alternative to sapply() when writing functions
+#tapply() to split your data into groups based on the value of some variable, then apply a function to each group
+
+#vapply works like sapply but allows you to imput an expected result to check for an errors before it occurs (useful in functions programming)
+#example when vapply will 'stop' because you dont get what you expect b/c each vector is a different length and can not be combined
+vapply(flags, unique, numeric(1))
+# this works because class is a vector of length one 
+vapply(flags, class, character(1))
+
+#you can write your own funtion in sapply when r does not already have a default functions
+
+
+#a table with a sum of all the rows that are in each column (Example: show how many countries are on each continent)
+table(flags$landmass)
+#this shows how many countries have animate objects on thier flag and how many do not
+table(flags$animate)
+#tapply can comfine information and loop (example: the proportion of flags containing an animate image WITHIN each landmass group)
+tapply(flags$animate, flags$landmass, mean)
+-----------------------------------------------
+
+Leeson 13 - Looking at Data (12)
+
+#overll structure of data
+class()
+#count rows and columns 
+dim()
+#number of rows or columns
+nrow()
+ncol()
+#how much space the dataset is occupying in memory
+object.size()
+#return a character vector of column (i.e. variable) names
+names()
+#show you the first six rows of the data
+head()
+head('data", number of rows you want to see)
+#tail show the last rows (default is 6 rows)
+tail (data, number or rows)
+#how each variable is distributed and how much of the dataset is missing
+summary()
+#see a count of how many times something occurs in a cloumn 
+table(plants$Active_Growth_Period)
+
+#str() combines many of these comands and displays most of hte information in one command
+str()
+---------------------------------------------
+
+LESSSON 14 - Simulations (13)
+
+#rndon number generate, without repalcement is hte default
+sample(x, size, repalce = FALSE, prob = NULL)
+
+#sample('vector') is a permutation of the vector b/c the size arguement defaults to the length of hte vector
+
+#a matrix, each column of which contains 5 random numbers generated from a Poisson distribution with mean 10
+replicate(100, rpois(5, 10))
+
+#find hte mean of each column which should be around 10
+cm <- colMeans(my_pois)
+#plot a histogram of hte means which should look normally distributed
+hist(cm)
+------------------------------------------
+
+LESSON 15  - Base Graphics (15)
+
+#Note: lattice, ggplot2 and ggvis covered elsewhere
+
+
+
+
+
+
+
