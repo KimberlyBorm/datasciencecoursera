@@ -1,5 +1,5 @@
 ---
-title: 'Part 1: Exploring Exponential Distributions and thier Means'
+title: 'Part 1: Exploring Exponential Distributions and Thier Center and Spread'
 author: "Kimberly Bormann"
 date: "2025-04-05"
 output: pdf_document
@@ -12,25 +12,33 @@ set.seed(123)
 
 ## Overview
 
+insert text later
 
-##Simulations
+
+##Distributions 
+
+We will create two simulations and investigate thier shape, mean, and variance. 
 
 
-#Single Sample of Exponential Variables nd its Theortical Distribution
-In this report we will explore two distribution. The first is a 1000 random exponentiation variables with λ = 0.2. Given our knowledge of exponential functions, we expect that when we visualize this distribution it will look very similar to the function used to generate the random variables which is `r $f(x) = 0.2e^{-0.2x}$`, where x is randomly generated.
+#First Distribution - Single Sample of Exponential Variables
+
+In this report we will explore two distribution. The first is a 1000 random exponentiation variables with $\lambda$ = 0.2. Given our knowledge of exponential functions, we expect that when we visualize this distribution it will look very similar to the function used to generate the random variables which is $f(x) = 0.2e^{-0.2x}$, where x is randomly generated.
 
 First we generate the variables.
 
 ```{r}
+        #set lambda value        
+        lambda <- 0.2        
+        #simulation of 1000 random exponential values
         exp_raw <- rexp(1000, rate = lambda)
+        #report
         cat("First few entries of a single simulation of 1000 values:\n")
         head(exp_raw)
 ```
 
-Now, let's do the simple calculations for the theoretical means and variance for an exponential distribution with 1000 occurrences and λ = 0.2. 
+Now, let's do the simple calculations for the theoretical means and variance for an exponential distribution with 1000 occurrences and $\lambda$ = 0.2. 
 
 ```{r}
-lambda <- 0.2
 theoretical_mean <- 1/lambda
 cat("The theoretical mean is", theoretical_mean, "\n")
 theoretical_sd <- 1/lambda
@@ -38,20 +46,20 @@ theoretical_var <- (1/lambda)^2
 cat("The theoretical variance is", theoretical_var, "\n")
 ```
 
-Then we can view the distribution to see if it reflect out expectation that it is right skewed like the decreasing exponential function. To make this easier, I overlay the function `r $f(x) = 0.2e^{-0.2x}$` on the histogram.
+Then we can view the distribution to see if it reflect out expectation that it is right skewed like the decreasing exponential function. To make this easier, I overlay the function $f(x) = 0.2e^{-0.2x}$ on the histogram.
 
 ```{r, fig.width=5, fig.height=5}
         #histogram form 1000 exponential values
-         hist(expDis, probability = TRUE, 
+         hist(exp_raw, probability = TRUE, 
              main = "Histogram of 1000 Exponential Values", 
              xlab = "Exponential Value", 
              col = "lightblue",
-             xlim = c(0, quantile(expDis, 0.99)))
+             xlim = c(0, quantile(exp_raw, 0.99)))
         
         #overlay the theoretical exponential density curve
         curve(dexp(x, rate = lambda), 
               from = 0, 
-              to = quantile(expDis, 0.99),
+              to = quantile(exp_raw, 0.99),
               add = TRUE, 
               col = "red", 
               lwd = 2)
@@ -67,9 +75,10 @@ Variance of a sinlge simulation: `r var(exp_raw)`
 We can see that these the sample and theoretical means and variance are very similar. 
 
 
-#1000 Sample of 40 Exponential Variables and its Theortical Distribution
+#Second Distribution - 1000 Sample of 40 Exponential Variables
 
-The theoretical means and variance for 1000 samples of 40 exponential random variables with λ = 0.2.
+
+The theoretical means and variance for 1000 samples of 40 exponential random variables with $\lambda$ = 0.2.
 ```{r}
 #theoretical mean calulation
 lambda <- 0.2
