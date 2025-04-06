@@ -1,8 +1,10 @@
 ---
-title: 'Part 1: Exploring Exponential Distributions and Thier Center and Spread'
+title: 'Part 1: Exploring Exponential Simulations and Their Center and Spread'
 author: "Kimberly Bormann"
 date: "2025-04-05"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -12,17 +14,16 @@ set.seed(123)
 
 ## Overview
 
-insert text later
+This document explores the exponential distribution with simulations in R. We generate both individual exponential values and averages of multiple samples to compare their properties with theoretical expectations. The study uses histograms and overlaid density curves to visualize the differences between raw exponential data and the normally distributed sample means predicted by the Central Limit Theorem.
 
+## Distributions
 
-##Distributions 
+We will create two simulations to investigate and compare their shape, mean, and variance.
 
-We will create two simulations and investigate thier shape, mean, and variance. 
+### First Distribution - Single Sample of Exponential Variables
 
-
-#First Distribution - Single Sample of Exponential Variables
-
-In this report we will explore two distribution. The first is a 1000 random exponentiation variables with $\lambda$ = 0.2. Given our knowledge of exponential functions, we expect that when we visualize this distribution it will look very similar to the function used to generate the random variables which is $f(x) = 0.2e^{-0.2x}$, where x is randomly generated.
+The first distribution is 1000 random exponential variables with $\lambda$ = 0.2. 
+Given our knowledge of exponential functions, we expect that when we visualize this distribution it will look very similar to the function used to generate the random variables which is $f(x) = 0.2e^{-0.2x}$, where x is randomly generated.
 
 First we generate the variables.
 
@@ -31,22 +32,31 @@ First we generate the variables.
         lambda <- 0.2        
         #simulation of 1000 random exponential values
         exp_raw <- rexp(1000, rate = lambda)
-        #report
-        cat("First few entries of a single simulation of 1000 values:\n")
-        head(exp_raw)
 ```
 
-Now, let's do the simple calculations for the theoretical means and variance for an exponential distribution with 1000 occurrences and $\lambda$ = 0.2. 
+The first few entries of our single simulation of 1000 values: `r head(exp_raw)`
+
+We can see the variables appear to be a collection of random exponential variables.
+
+<br>
+
+Now, let's do the simple calculations for the theoretical means and variance for an exponential distribution with 1000 occurrences and $\lambda$ = 0.2.
 
 ```{r}
+#calulate theoretical mean
 theoretical_mean <- 1/lambda
-cat("The theoretical mean is", theoretical_mean, "\n")
+#calulate theoretical variance
 theoretical_sd <- 1/lambda
 theoretical_var <- (1/lambda)^2
-cat("The theoretical variance is", theoretical_var, "\n")
 ```
 
-Then we can view the distribution to see if it reflect out expectation that it is right skewed like the decreasing exponential function. To make this easier, I overlay the function $f(x) = 0.2e^{-0.2x}$ on the histogram.
+The Theoretical Mean: `r theoretical_mean`
+
+The Theoretical Variance: `r theoretical_var`
+
+<br>
+
+Next, we can view the distribution to see if it reflect our expectation that it is right skewed and decreasing with similar shape to the exponential function. To make this easier, I overlay the function $f(x) = 0.2e^{-0.2x}$ on the histogram.
 
 ```{r, fig.width=5, fig.height=5}
         #histogram form 1000 exponential values
@@ -54,82 +64,100 @@ Then we can view the distribution to see if it reflect out expectation that it i
              main = "Histogram of 1000 Exponential Values", 
              xlab = "Exponential Value", 
              col = "lightblue",
-             xlim = c(0, quantile(exp_raw, 0.99)))
+             xlim = c(0, quantile(exp_raw, 0.99))) #create a common scale for the function
         
         #overlay the theoretical exponential density curve
         curve(dexp(x, rate = lambda), 
               from = 0, 
-              to = quantile(exp_raw, 0.99),
+              to = quantile(exp_raw, 0.99), #apply the common scale to the function
               add = TRUE, 
               col = "red", 
               lwd = 2)
 ```
 
-This density function is right-skewed. We can see that the random sample is a very close match to the theoretical density function because the Law of Large Numbers(LLN) tells us that the large the sample the more likely it is to approach the theoretical density curve. 
+This density function is right-skewed and decreaseing and is a close fit to the theoretical distribution in red. 
 
-Lastly, let's compare the theoretical mean and variance to the sample mean and variance.
+The Law of Large Numbers(LLN) tells us that if the sample is large enough, the sample will approach the theoretical density curve. We can see that the random sample is a very close match to the theoretical density function therefore n=1000 is a good sample size. 
 
-Mean of this single simulation:" `r mean(exp_raw)`
-Variance of a sinlge simulation: `r var(exp_raw)`
+<br>
 
-We can see that these the sample and theoretical means and variance are very similar. 
+To further support this, let's compare the theoretical mean and variance to the sample mean and variance.
+
+Sample Mean: `r mean(exp_raw)` 
+<br>
+Sample Variance: `r var(exp_raw)`
+
+Again, we can see that the sample and theoretical means and variance are very similar.
 
 
-#Second Distribution - 1000 Sample of 40 Exponential Variables
+### Second Distribution - 1000 Sample Means of 40 Exponential Variables
 
+This second distribution is 1000 samples of 40 exponential random variables with $\lambda$ = 0.2. After creating a matrix, we take the means of each sample(column) and investigate the averages of 1000 samples.
 
-The theoretical means and variance for 1000 samples of 40 exponential random variables with $\lambda$ = 0.2.
+First, let's generate the values.
+
 ```{r}
-#theoretical mean calulation
+#generate 1000 simulation of 40 random exponential variables in a matrix where each column contains 40 random exponential variables.
+n <- 40
+n_sim <- 1000
+sim_matrix <- matrix(rexp(n*n_sim, rate = lambda), nrow = n, ncol = n_sim)
+#calculate the mean of each sample by finding the average of each column (this is our new data set)
+sim_means <- apply(sim_matrix, 2, mean)
+#calculate the variance of each sample (just for fun)
+sim_vars <- apply(sim_matrix, 2, var)
+```
+
+First few averages from each sample:`r head(sim_means)`
+<br>
+First few variances from each sample: `r head(sim_vars)`
+
+We can see, just like in the last simulation and means are all around 5 and the variances are all around 25, as we expect. 
+
+<br>
+
+We will only use the sample averages moving forward. 
+
+Now let's compare the sample mean and variance to the theoretical mean and variance. 
+
+The mean of the averages will be $1/\lambda$ as before. However the variance is the standard error squared or $\left(\frac{1}{\lambda \sqrt{n}}\right)^2$ because this distribution is the averages of 1000 samples. 
+
+```{r}
+#theoretical mean calculation
 lambda <- 0.2
 theoretical_mean <- 1/lambda
-cat("The theoretical mean is", theoretical_mean, "\n")
-theoretical_sd <- 1/lambda
-
 #theoretical variance calulation
 n <- 40
 theoretical_sd <- 1/lambda
 theoretical_se <- theoretical_sd/sqrt(n)
 theoretical_mean_var <- theoretical_se^2
-cat("The theoretical variance of the means is", theoretical_mean_var, "\n")
 ```
 
-Next, let's generate the values and compare the mean and variance of hte sample to the theoretical mean and variance. 
+Theoretical Mean: `r theoretical_mean`
+<br>
+Theoretical Variance of the Sample Mean: `r round(theoretical_mean_var, 3)`
+
+<br>
+
+Now let's compare the sample means and variance to the theoretical ones.
 
 ```{r}
-#generate 1000 simulation of 40 random exponential variables in a matrix where each column contains 40 random exponential variables.
-n_sim <- 1000
-sim_matrix <- matrix(rexp(n*n_sim, rate = lambda), nrow = n, ncol = n_sim)
-#calculate the mean of each sample
-sim_means <- apply(sim_matrix, 2, mean)
-#calculate the variance of each sample
-sim_vars <- apply(sim_matrix, 2, var)
-#vector of all the sample means
-avg_values <- replicate(1000, mean(rexp(n, rate = lambda)))
-cat("first few sample means:\n")
-head(sim_means)
+sample_mean <- round(mean(sim_means), 3)
+sample_var <- round(var(sim_means), 3)
 ```
 
-Now let's compare the sample means and variance to the theoretical ones calulates earlier. 
+Sample Mean: `r sample_mean`
+<br>
+Sample Variance: `r sample_var`
 
-```{r}
-cat("Sample Means (averages of 40 exponentials):\n")
-cat("  Sample Mean:", round(mean(sim_means), 3), "\n")
-cat("  Sample Variance:", round(var(sim_means), 3), "\n\n")
+As you can see the sample mean and variance is extremely close to the theoretical mean and variance. This suggests that the sample is normally distributed. 
 
-cat("Theoretical Values:\n")
-cat("  Theoretical Mean:", theoretical_mean, "\n")
-cat("  Theoretical Variance of the Sample Mean:", round(theoretical_mean_var, 3), "\n")
-```
+<br>
 
-As you can see the sample mean and variance is extremely close to the theoretical mean and variance. 
+Lastly, let's view the distribution. Unlike the first simulation which generated 1000 random exponential variables, this simulation generated 1000 means of random exponential variables.
 
-Lastly, let's view the distribution. Unlike the first simulation which generated 1000 random exponential variables, this simulation generated 1000 means of random exponential variables. 
+Therefore, by the Central Limit Theorem(CLT), we expect that this distribution will be normally distributed because CLT state that, although each individual observation is not normally distributed, the distribution of the sample mean will tend toward a normal distribution as the sample size increases. With sample size 1000 we expect a mostly normal distribution.
 
-
-Therefore, by the Cental Limit Theorem(CLT), we expect that this distribution will be normally distributed because CLT state that, although each individual observation is not normally distributed, the distribution of the sample mean will tend toward a normal distribution as the sample size increases. With sample size 1000 we expect a mostly normal distribution. 
-
-For comparison,  I overlay the normal distribution with the theoretical mean and variance to the sample distribution. 
+For comparison, I overlay the normal distribution with theoretical mean and variance to the sample distribution.
 
 ```{r fig.width=5, fig.height=5}
 #plot the histogram of sample means with density scaling
@@ -144,7 +172,11 @@ For comparison,  I overlay the normal distribution with the theoretical mean and
               add = TRUE, col = "red", lwd = 2)        
 ```
 
-We can see that the distribution is normally distributed as expected. 
+We can see that the sample distribution fits the theortical model well and is normally distributed as expected.
 
+
+## Summary 
+
+In conclusion, our simulations confirm that while individual exponential data is right-skewed, the distribution of sample means tends toward normality. The  means and variances closely match the theoretical values, demonstrating the accuracy of our simulation. 
 
 
