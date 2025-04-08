@@ -1,0 +1,101 @@
+---
+title: "Inferential Analysis of Tooth Growth"
+author: "Kimberly Bormann"
+date: "2025-04-06"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+This document explores the effects of vitamin C on tooth growth in guinea pigs. We will compare  vitamin C delivered through orange juice (OJ) or ascorbic acid (VC) at dosages of 0.5, 1, and 2 milligrams in relation to overall tooth growth. 
+
+## Data Summary
+
+We begin by loading the data and inspecting it. 
+
+```{r}
+#load package and data
+library(datasets)
+data("ToothGrowth")
+#explore data
+summary(ToothGrowth)
+```
+
+We can see that there are three variables: tooth growth, type of Vit C supplement, and dose of supplement. We can also see that the tooth growth has a wide range from 4.20 to 33.9 and the dose options are 0.5, 1.0, and 2.0. 
+
+To better understand the effects of these supplements, we will investigate further with some exploratory graphs. 
+
+```{r}
+#set up the plotting area
+par(mfrow = c(1, 2))
+#boxplot of tooth growth by supplement type
+boxplot(len ~ supp, data = ToothGrowth,
+        main = "Tooth Growth by Supplement",
+        xlab = "Supplement",
+        ylab = "Tooth Length",
+        col = c("lightblue", "lightgreen"))
+#boxplot of tooth growth by dose
+boxplot(len ~ dose, data = ToothGrowth,
+        main = "Tooth Growth by Dose",
+        xlab = "Dose",
+        ylab = "Tooth Length",
+        col = "lightcoral")
+```
+
+**Tooth Growth by Supplement:**
+The boxplot comparing tooth growth by supplement type indicates that the median tooth growth is higher for the OJ group compared to the VC group. However, the interquartile ranges for both groups largely overlap, suggesting that the spread of the central 50% of the data is similar for OJ and VC. This overlap implies that while there is a difference in the central tendency, the overall distribution is not drastically different.
+
+```{r, results = "hide"}
+mean(ToothGrowth$len[ToothGrowth$supp == "OJ"]) - mean(ToothGrowth$len[ToothGrowth$supp == "VC"])
+```
+
+The difference in tooth growth between groups is 3.7 units. Considering the broad range of tooth growth observed, this difference may be modest.
+
+<br>
+
+**Tooth Growth by Dose:**
+In contrast, the boxplots for tooth growth by dose display a clear upward trend: as the dose increases, the median tooth growth increases, and the entire interquartile range shifts upward. This separation between the dose groups suggests that the dose has a pronounced effect on tooth growth. The increasing medians and non-overlapping interquartile ranges across doses provide stronger evidence that the supplement dose is a significant factor in determining tooth growth.
+
+<br>
+
+## Tests of Statistical Significance
+
+Our exploratory analysis with boxplots provided initial evidence of differences in tooth growth by both supplement type and dose. However, we cannot rely solely on descriptive statistics to draw definitive conclusions. Therefore, we will perform two t-tests to  assess whether these differences are significant.
+
+### T-test for Tooth growth between Supplements 
+
+We begin by performing a two-sided t-test to compare the mean tooth growths between the OJ and VC groups. This conservative approach is used because we do not have a strong prior expectation that one group's mean would be higher than the other's.
+
+The box plot suggests that we can assume equal variance for this test since the distribution of data appears similar. We recall in our summary that both groups have a sample size of 30. Since they are the same we will assume equal variance. 
+
+<br>
+
+The null hypothesis is that the mean of each group is equal. The alternative hypothesis is that the mean of each group is not equal. 
+
+```{r}
+t_test_supp <- t.test(len ~ supp, data = ToothGrowth, var.equal = TRUE )
+t_test_supp
+```
+
+The 95% confidence interval is about [-0.167, 7.567]. Since 0 is a value in the confidence interval it supports the conclusion that the difference in mean might be zero. 
+Since the p-value is about 0.060, which is above the 0.05 significant level, we do not have enough evidence to support that the means differ. 
+
+Therefore, we accept the null hypothesis that there is no statistically significant difference between the OJ group and VC group. **This evidence suggests that tooth growth does not differ significantly between supplement types.** 
+
+
+### T-test for Tooth growth between Dose 
+We will now perform multiple comparisons for tooth growth between dose pairs with separate t-tests for each pair (0.5 vs. 1.0, 0.5 vs. 2.0, and 1.0 vs. 2.0). We will adjust for multiple comparisons using the Bonferroni method, which divides our significance level by the number of test making it quite conservative. 
+
+The null hypothesis is that the mean of each group is equal. The alternative hypothesis is that the mean of each group is not equal.
+ 
+```{r}
+pairwise.t.test(ToothGrowth$len, ToothGrowth$dose, p.adjust.method = "bonferroni", var.equal = TRUE)
+```
+
+The p values for comparison between dose 0.5 and dose 1, dose 0.5 and dose 2, and 1 and dose 2 are $2.0 \times 10^{-8}$, $4.4 \times 10^{-16}$, and $4.3\times 10^{-5}$ respectively. 
+
+All these p values are extremely small and well below the significance level of 0.05, indicating that the difference in mean tooth growth between doses is highly significant.**These results strongly suggest that tooth growth differs significantly between all pairs of dose levels.**

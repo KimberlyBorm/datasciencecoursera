@@ -1,8 +1,9 @@
 ---
-title: 'Part 1: Exploring Exponential Simulations and Their Center and Spread'
+title: "Exploring Exponential Simulations and Their Center and Spread"
 author: "Kimberly Bormann"
 date: "2025-04-05"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -14,7 +15,7 @@ set.seed(123)
 
 ## Overview
 
-This document explores the exponential distribution with simulations in R. We generate both individual exponential values and averages of multiple samples to compare their properties with theoretical expectations. The study uses histograms and overlaid density curves to visualize the differences between raw exponential data and the normally distributed sample means predicted by the Central Limit Theorem.
+This document explores the exponential distribution through simulations in R. We generate both individual exponential values and averages from multiple samples to compare their properties with theoretical expectations. The study uses histograms and overlaid density curves to visualize the differences between raw exponential data and the normally distributed sample means predicted by the Central Limit Theorem.
 
 ## Distributions
 
@@ -23,7 +24,7 @@ We will create two simulations to investigate and compare their shape, mean, and
 ### First Distribution - Single Sample of Exponential Variables
 
 The first distribution is 1000 random exponential variables with $\lambda$ = 0.2. 
-Given our knowledge of exponential functions, we expect that when we visualize this distribution it will look very similar to the function used to generate the random variables which is $f(x) = 0.2e^{-0.2x}$, where x is randomly generated.
+Given our knowledge of exponential functions, we expect that when we visualize this distribution it will resemble the theoretical density function  $f(x) = 0.2e^{-0.2x}$.
 
 First we generate the variables.
 
@@ -34,13 +35,13 @@ First we generate the variables.
         exp_raw <- rexp(1000, rate = lambda)
 ```
 
-The first few entries of our single simulation of 1000 values: `r head(exp_raw)`
+The first few entries of our simulation: `r head(exp_raw)`
 
-We can see the variables appear to be a collection of random exponential variables.
+We can see that the values appear to be drawn from an exponential distribution.
 
 <br>
 
-Now, let's do the simple calculations for the theoretical means and variance for an exponential distribution with 1000 occurrences and $\lambda$ = 0.2.
+Now, let's calculate the theoretical mean and variance for an exponential distribution with $\lambda$ = 0.2.
 
 ```{r}
 #calulate theoretical mean
@@ -56,16 +57,15 @@ The Theoretical Variance: `r theoretical_var`
 
 <br>
 
-Next, we can view the distribution to see if it reflect our expectation that it is right skewed and decreasing with similar shape to the exponential function. To make this easier, I overlay the function $f(x) = 0.2e^{-0.2x}$ on the histogram.
+Next, we view the distribution to see if it reflects our expectation of being right-skewed and decreasing, similar in shape to the theoretical exponential function. To facilitate this, I overlay the function $f(x) = 0.2e^{-0.2x}$ on the histogram.
 
-```{r, fig.width=5, fig.height=5}
+```{r, fig.width=4, fig.height=4}
         #histogram form 1000 exponential values
          hist(exp_raw, probability = TRUE, 
              main = "Histogram of 1000 Exponential Values", 
              xlab = "Exponential Value", 
              col = "lightblue",
              xlim = c(0, quantile(exp_raw, 0.99))) #create a common scale for the function
-        
         #overlay the theoretical exponential density curve
         curve(dexp(x, rate = lambda), 
               from = 0, 
@@ -75,25 +75,26 @@ Next, we can view the distribution to see if it reflect our expectation that it 
               lwd = 2)
 ```
 
-This density function is right-skewed and decreaseing and is a close fit to the theoretical distribution in red. 
+This density function is right-skewed and decreasing, and the overlay shows a close fit to the theoretical distribution.
 
-The Law of Large Numbers(LLN) tells us that if the sample is large enough, the sample will approach the theoretical density curve. We can see that the random sample is a very close match to the theoretical density function therefore n=1000 is a good sample size. 
+The Law of Large Numbers (LLN) tells us that if the sample is large enough, the sample distribution will approach the theoretical density curve. We can see that our sample approximates the theoretical curve well, indicating that n=1000 is a good sample size. 
 
 <br>
 
 To further support this, let's compare the theoretical mean and variance to the sample mean and variance.
 
 Sample Mean: `r mean(exp_raw)` 
+
 <br>
+
 Sample Variance: `r var(exp_raw)`
 
-Again, we can see that the sample and theoretical means and variance are very similar.
+Again, we observe that the sample and theoretical values are very similar.
 
 
 ### Second Distribution - 1000 Sample Means of 40 Exponential Variables
 
-This second distribution is 1000 samples of 40 exponential random variables with $\lambda$ = 0.2. After creating a matrix, we take the means of each sample(column) and investigate the averages of 1000 samples.
-
+This second simulation consists of 1000 samples, each containing 40 exponential random variables with $\lambda$ = 0.2.  We then compute the mean for each sample (each column of a matrix) to create a distribution of 1000 sample means.
 First, let's generate the values.
 
 ```{r}
@@ -108,18 +109,20 @@ sim_vars <- apply(sim_matrix, 2, var)
 ```
 
 First few averages from each sample:`r head(sim_means)`
+
 <br>
+
 First few variances from each sample: `r head(sim_vars)`
 
-We can see, just like in the last simulation and means are all around 5 and the variances are all around 25, as we expect. 
+We observe that, as expected, the sample means are approximately 5 and the sample variances are about 25.
 
 <br>
 
 We will only use the sample averages moving forward. 
 
-Now let's compare the sample mean and variance to the theoretical mean and variance. 
+Now, let's compare the sample mean and variance of these averages to their theoretical counterparts.
 
-The mean of the averages will be $1/\lambda$ as before. However the variance is the standard error squared or $\left(\frac{1}{\lambda \sqrt{n}}\right)^2$ because this distribution is the averages of 1000 samples. 
+The mean of the averages will be $1/\lambda$ as before. However the variance is the standard error squared or $\left(\frac{1}{\lambda \sqrt{n}}\right)^2$ because this distribution is the averages of 1000 sample means. 
 
 ```{r}
 #theoretical mean calculation
@@ -133,12 +136,14 @@ theoretical_mean_var <- theoretical_se^2
 ```
 
 Theoretical Mean: `r theoretical_mean`
+
 <br>
+
 Theoretical Variance of the Sample Mean: `r round(theoretical_mean_var, 3)`
 
 <br>
 
-Now let's compare the sample means and variance to the theoretical ones.
+Now let's compare the sample means and variance to the theoretical values
 
 ```{r}
 sample_mean <- round(mean(sim_means), 3)
@@ -146,37 +151,37 @@ sample_var <- round(var(sim_means), 3)
 ```
 
 Sample Mean: `r sample_mean`
+
 <br>
+
 Sample Variance: `r sample_var`
 
-As you can see the sample mean and variance is extremely close to the theoretical mean and variance. This suggests that the sample is normally distributed. 
+As you can see, the sample mean and variance are extremely close to the theoretical values. This suggests that the distribution of sample means is approximately normal.
 
 <br>
 
-Lastly, let's view the distribution. Unlike the first simulation which generated 1000 random exponential variables, this simulation generated 1000 means of random exponential variables.
+Lastly, let's visualize the distribution of the sample means. Unlike the first simulation, which generated 1000 random exponential values, this simulation generated 1000 sample means.
 
-Therefore, by the Central Limit Theorem(CLT), we expect that this distribution will be normally distributed because CLT state that, although each individual observation is not normally distributed, the distribution of the sample mean will tend toward a normal distribution as the sample size increases. With sample size 1000 we expect a mostly normal distribution.
+According to the Central Limit Theorem (CLT), even though individual exponential observations are not normally distributed, the distribution of the sample mean will tend to a normal distribution as the sample size increases. With 1000 samples of 40 observations each, we expect a nearly normal distribution.
 
-For comparison, I overlay the normal distribution with theoretical mean and variance to the sample distribution.
+For comparison, I overlay the theoretical normal distribution (with the theoretical mean and variance) on the histogram of the sample means.
 
-```{r fig.width=5, fig.height=5}
+```{r fig.width=4, fig.height=4}
 #plot the histogram of sample means with density scaling
         hist(sim_means, probability = TRUE,
              main = "Histogram of 1000 Sample Means (n = 40)",
              xlab = "Sample Mean",
              col = "lightgreen")
-        
 #overlay the theoretical normal density curve
         curve(dnorm(x, mean = theoretical_mean, sd = sqrt(theoretical_mean_var)),
               from = min(sim_means), to = max(sim_means),
               add = TRUE, col = "red", lwd = 2)        
 ```
 
-We can see that the sample distribution fits the theortical model well and is normally distributed as expected.
-
+We can see that the sample distribution fits the theoretical model well and is normally distributed as expected.
 
 ## Summary 
 
-In conclusion, our simulations confirm that while individual exponential data is right-skewed, the distribution of sample means tends toward normality. The  means and variances closely match the theoretical values, demonstrating the accuracy of our simulation. 
+In conclusion, our simulations confirm that while individual exponential data are right-skewed, the distribution of sample means tends toward normality. The sample means and variances closely match the theoretical values, demonstrating the accuracy of our simulation.
 
 
